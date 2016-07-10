@@ -615,7 +615,7 @@ confusionMatrix(prediction, ideal)
 
 
 ###################################################
-# APPLY MODEL TO TEST
+# APPLY MODEL TO TEST DATASET
 ###################################################
 train <- train.raw
 test <- test.raw
