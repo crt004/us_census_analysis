@@ -124,15 +124,18 @@ for(k in 1:n_folds){
   test_i <- which(folds_i == k)
   train_ <- train[-test_i,]
   test_ <- train[test_i,]
-
-  model <- glm(train_$target ~.,family=binomial(link='logit'),data=train_)
   
+  # train model
+  model <- glm(train_$target ~.,family=binomial(link='logit'),data=train_)
+  # make predictions with the model
   prediction = predict(model, test_, type="response")
   
   fitted.results <- ifelse(prediction > 0.5,1,0)
   misClasificError <- mean(fitted.results != test_$target)
   print(paste('Accuracy fold',k,'-' ,1-misClasificError))
   global_misClasificError = global_misClasificError + (1-misClasificError)
+  # TODO: there should be a more elegant way to concatenate dataframes
+  # for the moment this work (not my proudest code, but it makes the job)
   if( k==1 ) ideal1 <- test_$target
   if( k==2 ) ideal2 <- test_$target
   if( k==3 ) ideal3 <- test_$target
@@ -245,6 +248,8 @@ for(k in 1:n_folds){
   misClasificError <- mean(fitted.results != test_$target)
   print(paste('Accuracy fold',k,'-' ,1-misClasificError))
   global_misClasificError = global_misClasificError + (1-misClasificError)
+  # TODO: there should be a more elegant way to concatenate dataframes
+  # for the moment this work (not my proudest code, but it makes the job)
   if( k==1 ) ideal1 <- test_$target
   if( k==2 ) ideal2 <- test_$target
   if( k==3 ) ideal3 <- test_$target
@@ -362,6 +367,8 @@ for(k in 1:n_folds){
   misClasificError <- mean(fitted.results != test_$target)
   print(paste('Accuracy fold',k,'-' ,1-misClasificError))
   global_misClasificError = global_misClasificError + (1-misClasificError)
+  # TODO: there should be a more elegant way to concatenate dataframes
+  # for the moment this work (not my proudest code, but it makes the job)
   if( k==1 ) ideal1 <- test_$target
   if( k==2 ) ideal2 <- test_$target
   if( k==3 ) ideal3 <- test_$target
@@ -458,6 +465,8 @@ for(k in 1:n_folds){
   misClasificError <- mean(m$fitted.results != test_$target)
   print(paste('Accuracy fold',k,'-' ,1-misClasificError))
   global_misClasificError = global_misClasificError + (1-misClasificError)
+  # TODO: there should be a more elegant way to concatenate dataframes
+  # for the moment this work (not my proudest code, but it makes the job)
   if( k==1 ) ideal1 <- test_$target
   if( k==2 ) ideal2 <- test_$target
   if( k==3 ) ideal3 <- test_$target
@@ -559,6 +568,8 @@ for(k in 1:n_folds){
   misClasificError <- mean(prediction != test_$target)
   print(paste('Accuracy fold',k,'-' ,1-misClasificError))
   global_misClasificError = global_misClasificError + (1-misClasificError)
+  # TODO: there should be a more elegant way to concatenate dataframes
+  # for the moment this work (not my proudest code, but it makes the job)
   if( k==1 ) ideal1 <- test_$target
   if( k==2 ) ideal2 <- test_$target
   if( k==3 ) ideal3 <- test_$target
@@ -617,6 +628,13 @@ confusionMatrix(prediction, ideal)
 ###################################################
 # APPLY MODEL TO TEST DATASET
 ###################################################
+
+# Altough there was a tie between the accuracy of SVM and Desicion Tree,
+# the DT took arround 5~10 minutes to fit, 
+# meanwhile the SVM took arround 7~8 hours
+# And thats the reason why I choosed DT to SVM
+# and also because the results of a DT can be more easy to interpret
+
 train <- train.raw
 test <- test.raw
 #extract instance_weight (ignore column as specified in metadata file)
@@ -642,10 +660,14 @@ for(c in columns_with_na){
 train_ <- train
 test_ <- test
 
+# tarin the model
 tree <- rpart(target ~.,method = "class", data =train_)
+# print tree info
 printcp(tree)
+# generate a graphic of the tree
 post(tree, file = "tree.ps", title = "Decision tree")
 
+# make predictions with the model
 prediction = predict(tree, test_[,-41])
 fitted.results <- ifelse(prediction[," - 50000."] > prediction[," 50000+."]," - 50000."," 50000+.")
 m <- as.data.frame(fitted.results)

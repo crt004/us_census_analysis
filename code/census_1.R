@@ -120,6 +120,8 @@ par(mfrow=c(1,2))
 boxplot(capital_gains, cex.axis=0.5, las=2, outline = FALSE)
 boxplot(capital_gains, cex.axis=0.5, las=2)
 dev.off()
+# after the the previous plot, I notice that they were too many zeros in capital_gains
+# same thing with other continous variables, so I didn't make another extra analysis with them
 
 # capital_losses histogram and boxplot
 pdf("../reports/continuous_variables/17_capital_losses.pdf")
